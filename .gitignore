@@ -1,0 +1,56 @@
+# Binaries and build outputs
+bin/
+obj/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Core Environment files
+*.vs/
+.vscode/
+.history/
+
+# Local configuration files
+appsettings*.json
+appsettings*.Development.json
+
+# Log files
+*.log
+logs/
+
+# Entity Framework Migrations
+Migrations/
+
+# NPM packages and Node.js dependencies
+node_modules/
+
+# Publish output
+publish/
+dist/
+
+# OS-generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE Files
+.idea/
+*.code-workspace
+
+# Rider Projects
+.idea/
+.idea/
+
+# MacOS generated files
+.DS_Store
+
+# Others
+*.swp
+*.bak
+*.tmp
+*.temp
