@@ -1,13 +1,82 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using CNLTHD.DTO;
+using CNLTHD.Service.IService;
 
 namespace CNLTHD.Controllers
 {
-    public class CategoryController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CategoryController : ControllerBase
     {
-        [HttpGet("getCategories")]
-        public async Task<IActionResult> getCategories([FromQuery] int page = 1, [FromQuery] int limit = 12)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
-            return Ok("result");
+            _categoryService = categoryService;
+        }
+
+        [HttpGet("getCategories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            if (categories == null || !categories.Any())
+            {
+                return NotFound("No categories found.");
+            }
+
+            return Ok(categories); 
+        }
+
+        [HttpGet("getbyid/{id}")]
+        public async Task<IActionResult> GetCategoryById(int id)
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(id);
+            if (category == null)
+            {
+                return NotFound($"Category with id {id} not found.");
+            }
+
+            return Ok(category);
+        }
+
+        [HttpPost("createCategory")]
+        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var createdCategory = await _categoryService.CreateCategoryAsync(createCategoryDto);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.CategoryId }, createdCategory);
+        }
+
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryDto updateCategoryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); 
+            }
+
+            var updatedCategory = await _categoryService.UpdateCategoryAsync(id, updateCategoryDto);
+            if (updatedCategory == null)
+            {
+                return NotFound($"Category with id {id} not found.");
+            }
+
+            return NoContent(); 
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var result = await _categoryService.DeleteCategoryAsync(id);
+            if (!result)
+            {
+                return NotFound($"Category with id {id} not found.");
+            }
+
+            return NoContent();
         }
     }
 }
