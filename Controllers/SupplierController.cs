@@ -1,5 +1,6 @@
 ﻿using CNLTHD.DTO;
 using CNLTHD.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CNLTHD.Controllers
@@ -16,6 +17,7 @@ namespace CNLTHD.Controllers
 
         [HttpDelete]
         [Route("/delete/{supplierId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute]int supplierId)
         {
             await _supplierService.DeleteAsync(supplierId);
@@ -24,6 +26,7 @@ namespace CNLTHD.Controllers
 
         [HttpGet]
         [Route("/get-all")]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
            var result =  await _supplierService.GetAllAsync();
@@ -34,6 +37,7 @@ namespace CNLTHD.Controllers
 
         [HttpGet]
         [Route("/get-by-id/{supplierId}")]
+        [Authorize]
         public async Task<IActionResult> GetById([FromRoute] int supplierId)
         {
             var result = await _supplierService.GetAsync(supplierId);
@@ -43,6 +47,7 @@ namespace CNLTHD.Controllers
 
         [HttpPost]
         [Route("/create")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] CreateSupplierDTO request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -53,6 +58,7 @@ namespace CNLTHD.Controllers
 
         [HttpPut]
         [Route("/update/{supplierId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute]int supplierId, [FromBody] UpdateSupplierDTO request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

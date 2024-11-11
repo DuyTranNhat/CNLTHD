@@ -24,15 +24,15 @@ public partial class CnlthdDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-UGUU7LBC\\SQLEXPRESS02;Initial Catalog=CNLTHD_DB;Integrated Security=True;TrustServerCertificate=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=CNLTHD_DB;User Id=sa;Password=123456;Integrated Security=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A0BE119BB4A");
+            entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A0B2C0FA434");
 
             entity.ToTable("Category");
 
@@ -41,7 +41,7 @@ public partial class CnlthdDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CD473CBB2C");
+            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CDB7D19F44");
 
             entity.ToTable("Product");
 
@@ -61,7 +61,7 @@ public partial class CnlthdDbContext : DbContext
 
         modelBuilder.Entity<Supplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__Supplier__4BE666B4D6448441");
+            entity.HasKey(e => e.SupplierId).HasName("PK__Supplier__4BE666B488650046");
 
             entity.ToTable("Supplier");
 
@@ -73,23 +73,20 @@ public partial class CnlthdDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__User__1788CC4C9521C033");
+            entity.HasKey(e => e.UserId).HasName("PK__User__1788CC4CEB7F7EEE");
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.Username, "UQ__User__536C85E4EB908BF0").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__User__A9D10534179C04F1").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__User__A9D10534FBA0D69C").IsUnique();
-
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.Address).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.FullName).HasMaxLength(50);
+            entity.Property(e => e.Password).HasMaxLength(255);
+            entity.Property(e => e.Phone).HasMaxLength(15);
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
                 .HasDefaultValue("user");
-            entity.Property(e => e.Username).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);

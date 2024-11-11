@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CNLTHD.DTO;
 using CNLTHD.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CNLTHD.Controllers
 {
@@ -39,6 +40,7 @@ namespace CNLTHD.Controllers
         }
 
         [HttpPost("createCategory")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
         {
             if (!ModelState.IsValid)
@@ -51,6 +53,7 @@ namespace CNLTHD.Controllers
         }
 
         [HttpPut("update/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryDto updateCategoryDto)
         {
             if (!ModelState.IsValid)
@@ -68,6 +71,7 @@ namespace CNLTHD.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var result = await _categoryService.DeleteCategoryAsync(id);
