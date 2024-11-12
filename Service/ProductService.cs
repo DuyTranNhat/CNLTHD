@@ -11,87 +11,96 @@ namespace CNLTHD.Service
 {
     public class ProductService : IProductService
     {
-        private readonly IProductRepository _repository;
+        private readonly IProductRepository _productRepository;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductService(IProductRepository repository)
+        public ProductService(IProductRepository repository, IWebHostEnvironment env)
         {
-            _repository = repository;
+            _productRepository = repository;
+            _env = env;
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAllAsync()
-        {
-            var products = await _repository.GetAllAsync();
-            return products.Select(p => new ProductDTO
-            {
-                ProductId = p.ProductId,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Stock = p.Stock,
-                CategoryId = p.CategoryId,
-                SupplierId = p.SupplierId,
-                ImageUrl = p.ImageUrl
-            });
-        }
+        public async Task<IEnumerable<Product>> GetAllProductsAsync() => await _productRepository.GetAllAsync();
 
-        public async Task<ProductDTO?> GetByIdAsync(int id)
-        {
-            var product = await _repository.GetByIdAsync(id);
-            if (product == null) return null;
+        public async Task<Product?> GetProductByIdAsync(int id) => await _productRepository.GetByIdAsync(id);
 
-            return new ProductDTO
-            {
-                ProductId = product.ProductId,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Stock = product.Stock,
-                CategoryId = product.CategoryId,
-                SupplierId = product.SupplierId,
-                ImageUrl = product.ImageUrl
-            };
-        }
-
-        public async Task<ProductDTO> CreateAsync(CreateProductDto createProductDto)
+        public async Task<Product> CreateProductAsync(ProductDTO productDto)
         {
             var product = new Product
             {
-                Name = createProductDto.Name,
-                Description = createProductDto.Description,
-                Price = createProductDto.Price,
-                Stock = createProductDto.Stock,
-                CategoryId = createProductDto.CategoryId,
-                SupplierId = createProductDto.SupplierId,
-                ImageUrl = createProductDto.ImageUrl
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Stock = productDto.Stock,
+                CategoryId = productDto.CategoryId,
+                SupplierId = productDto.SupplierId
             };
 
-            await _repository.AddAsync(product);
-            return await GetByIdAsync(product.ProductId);
+            if (productDto.Image != null)
+            {
+                string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploadsFolder);
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + productDto.Image.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await productDto.Image.CopyToAsync(fileStream);
+                }
+
+                product.ImageUrl = "/uploads/" + uniqueFileName;
+            }
+
+            await _productRepository.AddAsync(product);
+            return product;
         }
 
-        public async Task<ProductDTO?> UpdateAsync(int id, UpdateProductDto updateProductDto)
+        public async Task<Product?> UpdateProductAsync(int id, ProductDTO productDto)
         {
-            var product = await _repository.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id);
             if (product == null) return null;
 
-            product.Name = updateProductDto.Name;
-            product.Description = updateProductDto.Description;
-            product.Price = updateProductDto.Price;
-            product.Stock = updateProductDto.Stock;
-            product.CategoryId = updateProductDto.CategoryId;
-            product.SupplierId = updateProductDto.SupplierId;
-            product.ImageUrl = updateProductDto.ImageUrl;
+            product.Name = productDto.Name;
+            product.Description = productDto.Description;
+            product.Price = productDto.Price;
+            product.Stock = productDto.Stock;
+            product.CategoryId = productDto.CategoryId;
+            product.SupplierId = productDto.SupplierId;
 
-            await _repository.UpdateAsync(product);
-            return await GetByIdAsync(product.ProductId);
+            if (productDto.Image != null)
+            {
+                string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploadsFolder);
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + productDto.Image.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await productDto.Image.CopyToAsync(fileStream);
+                }
+
+                product.ImageUrl = "/uploads/" + uniqueFileName;
+            }
+
+            await _productRepository.UpdateAsync(product);
+            return product;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            var product = await _repository.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id);
             if (product == null) return false;
 
-            await _repository.DeleteAsync(id);
+            if (product.ImageUrl != null)
+            {
+                string imagePath = Path.Combine(_env.WebRootPath, product.ImageUrl.TrimStart('/'));
+                if (File.Exists(imagePath))
+                {
+                    File.Delete(imagePath);
+                }
+            }
+
+            await _productRepository.DeleteAsync(id);
             return true;
         }
     }

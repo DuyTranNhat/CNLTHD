@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CNLTHD.DTO;
+using CNLTHD.Models;
 
 namespace CNLTHD.Service.IService
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDTO>> GetAllAsync();
-        Task<ProductDTO?> GetByIdAsync(int id);
-        Task<ProductDTO> CreateAsync(CreateProductDto createProductDto);
-        Task<ProductDTO?> UpdateAsync(int id, UpdateProductDto updateProductDto);
-        Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Product>> GetAllProductsAsync();
+        Task<Product?> GetProductByIdAsync(int id);
+        Task<Product> CreateProductAsync(ProductDTO productDto);
+        Task<Product?> UpdateProductAsync(int id, ProductDTO productDto);
+        Task<bool> DeleteProductAsync(int id);
     }
 }

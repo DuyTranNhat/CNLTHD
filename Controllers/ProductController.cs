@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CNLTHD.DTO;
+using CNLTHD.Models;
 using CNLTHD.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,50 +14,46 @@ namespace CNLTHD.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductService _service;
+        private readonly IProductService _productService;
 
-        public ProductController(IProductService service)
+        public ProductController(IProductService productService)
         {
-            _service = service;
+            _productService = productService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
         {
-            var products = await _service.GetAllAsync();
-            return Ok(products);
+            return Ok(await _productService.GetAllProductsAsync());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDTO>> GetById(int id)
+        public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var product = await _service.GetByIdAsync(id);
+            var product = await _productService.GetProductByIdAsync(id);
             if (product == null) return NotFound();
             return Ok(product);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ProductDTO>> Create(CreateProductDto createProductDto)
+        public async Task<ActionResult<Product>> CreateProduct([FromForm] ProductDTO productDto)
         {
-            var product = await _service.CreateAsync(createProductDto);
-            return CreatedAtAction(nameof(GetById), new { id = product.ProductId }, product);
+            var product = await _productService.CreateProductAsync(productDto);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ProductDTO>> Update(int id, UpdateProductDto updateProductDto)
+        public async Task<ActionResult<Product>> UpdateProduct(int id, [FromForm] ProductDTO productDto)
         {
-            var updatedProduct = await _service.UpdateAsync(id, updateProductDto);
-            if (updatedProduct == null) return NotFound();
-            return Ok(updatedProduct);
+            var product = await _productService.UpdateProductAsync(id, productDto);
+            if (product == null) return NotFound();
+            return Ok(product);
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            var result = await _service.DeleteAsync(id);
+            bool result = await _productService.DeleteProductAsync(id);
             if (!result) return NotFound();
             return NoContent();
         }

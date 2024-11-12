@@ -18,19 +18,13 @@ namespace CNLTHD.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetAllAsync()
-        {
-            return await _context.Products.ToListAsync();
-        }
+        public async Task<IEnumerable<Product>> GetAllAsync() => await _context.Products.ToListAsync();
 
-        public async Task<Product?> GetByIdAsync(int id)
-        {
-            return await _context.Products.FindAsync(id);
-        }
+        public async Task<Product?> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
 
         public async Task AddAsync(Product product)
         {
-            await _context.Products.AddAsync(product);
+            _context.Products.Add(product);
             await _context.SaveChangesAsync();
         }
 
@@ -42,7 +36,7 @@ namespace CNLTHD.Repository
 
         public async Task DeleteAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await GetByIdAsync(id);
             if (product != null)
             {
                 _context.Products.Remove(product);

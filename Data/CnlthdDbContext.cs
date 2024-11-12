@@ -25,7 +25,7 @@ public partial class CnlthdDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=CNLTHD_DB;User Id=sa;Password=123456;Integrated Security=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=CNLTHD_DB;User Id=sa;Password=tiendat07022003;Integrated Security=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
