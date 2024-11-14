@@ -83,6 +83,17 @@ namespace CNLTHD.Service
 
             if (productDto.Image != null)
             {
+                // Xóa hình ?nh c? n?u có
+                if (!string.IsNullOrEmpty(product.ImageUrl))
+                {
+                    string oldImagePath = Path.Combine(_env.WebRootPath, product.ImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                // L?u hình ?nh m?i
                 string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploadsFolder);
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + productDto.Image.FileName;
@@ -97,9 +108,10 @@ namespace CNLTHD.Service
             }
 
             await _productRepository.UpdateAsync(product);
-            var rs = await GetProductByIdAsync(product.ProductId);
+            var rs = await GetProductByIdAsync(id);
             return rs;
         }
+
 
         public async Task<bool> DeleteProductAsync(int id)
         {

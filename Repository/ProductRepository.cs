@@ -27,8 +27,8 @@ namespace CNLTHD.Repository
 
         public async Task<Product> GetByIdAsync(int id)
         {
-            var productByID = await _context.Products.Include("Category").Include("Supplier").
-                FirstOrDefaultAsync(p => p.ProductId == id);
+            var productByID = await _context.Products.Include(p => p.Category).
+                Include(p => p.Supplier).FirstOrDefaultAsync(p => p.ProductId == id);
 
             return productByID;
         }

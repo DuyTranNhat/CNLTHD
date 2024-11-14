@@ -58,8 +58,10 @@ namespace CNLTHD.DTO
         [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")]
         public int? Stock { get; set; }
 
+        [Required(ErrorMessage = "CategoryId is required.")]
         public int? CategoryId { get; set; }
 
+        [Required(ErrorMessage = "SupplierId is required.")]
         public int? SupplierId { get; set; }
 
         public IFormFile? Image { get; set; }
