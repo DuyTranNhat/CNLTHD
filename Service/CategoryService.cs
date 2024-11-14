@@ -74,7 +74,8 @@ namespace CNLTHD.Services
             var category = await _categoryRepository.GetCategoryByIdAsync(id);
             if (category == null)
                 return false;
-
+            if (category.Products.Count > 0)
+                return false;
             await _categoryRepository.DeleteCategoryAsync(id);
             return true;
         }

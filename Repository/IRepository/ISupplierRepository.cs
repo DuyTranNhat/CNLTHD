@@ -10,7 +10,7 @@ namespace CNLTHD.Repository.IRepository
         Task<List<Supplier>> GetALlAsync();
         Task CreateAsync(Supplier request);
         Task<SupplierDTO> UpdateAsync( int SupplierId,UpdateSupplierDTO request);
-        Task DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
 
     }
 }

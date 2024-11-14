@@ -17,14 +17,16 @@ namespace CNLTHD.Repository
 
       
 
-        public async Task DeleteAsync(int supplierId)
+        public async Task<bool> DeleteAsync(int supplierId)
         {
-            var responseSupplier = await _context.Suppliers.FirstOrDefaultAsync(item => item.SupplierId == supplierId);
-            if (responseSupplier != null)
-            {
-                _context.Suppliers.RemoveRange(responseSupplier);
-                await _context.SaveChangesAsync();
-            }
+            var responseSupplier = await _context.Suppliers.Include(s=>s.Products).FirstOrDefaultAsync(item => item.SupplierId == supplierId);
+            if (responseSupplier == null)
+                return false;
+            if (responseSupplier.Products.Count > 0)
+                return false;
+            _context.Suppliers.RemoveRange(responseSupplier);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Supplier> GetAsync(int supplierId)

@@ -20,7 +20,8 @@ namespace CNLTHD.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute]int supplierId)
         {
-            await _supplierService.DeleteAsync(supplierId);
+            var result = await _supplierService.DeleteAsync(supplierId);
+            if (!result) return BadRequest("Not Found or being referenced!");
             return NoContent();
         }
 
@@ -30,7 +31,7 @@ namespace CNLTHD.Controllers
         public async Task<IActionResult> GetAll()
         {
            var result =  await _supplierService.GetAllAsync();
-            if (result.Count <= 0 || result == null) return BadRequest("Supplier list empty!");
+            if (result.Count() <= 0 || result == null) return BadRequest("Supplier list empty!");
             return Ok(result);
         }
 

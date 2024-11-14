@@ -36,15 +36,28 @@ namespace CNLTHD.Service
             };
         }
 
-        public async Task DeleteAsync(int SupplierId)
+        public async Task<bool> DeleteAsync(int SupplierId)
         {
-            await _supplierRepository.DeleteAsync(SupplierId);
+            var response = await _supplierRepository.DeleteAsync(SupplierId);
+            return response;
         }
 
-        public async Task<List<Supplier>> GetAllAsync()
+        public async Task<IEnumerable<SupplierDTO>> GetAllAsync()
         {
             var response = await _supplierRepository.GetALlAsync();
-            return response;
+            var supplierDtos = response.Select(s =>
+            {
+                return new SupplierDTO
+                {
+                    SupplierId = s.SupplierId,
+                    Address = s.Address,
+                    Email = s.Email,
+                    Name = s.Name,
+                    Phone = s.Phone,
+                };
+            });
+
+            return supplierDtos;
         }
 
         public async Task<SupplierDTO> GetAsync(int SupplierId)

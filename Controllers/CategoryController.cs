@@ -77,7 +77,7 @@ namespace CNLTHD.Controllers
             var result = await _categoryService.DeleteCategoryAsync(id);
             if (!result)
             {
-                return NotFound($"Category with id {id} not found.");
+                return NotFound("Not Found or being referenced");
             }
 
             return NoContent();
