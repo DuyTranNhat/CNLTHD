@@ -18,9 +18,20 @@ namespace CNLTHD.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetAllAsync() => await _context.Products.ToListAsync();
+        public async Task<IEnumerable<Product>> GetAllAsync()
+        {
+            var rs = await _context.Products.Include(p => p.Category).
+                Include(p => p.Supplier).ToListAsync();
+            return rs;
+        }
 
-        public async Task<Product?> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
+        public async Task<Product> GetByIdAsync(int id)
+        {
+            var productByID = await _context.Products.Include("Category").Include("Supplier").
+                FirstOrDefaultAsync(p => p.ProductId == id);
+
+            return productByID;
+        }
 
         public async Task AddAsync(Product product)
         {

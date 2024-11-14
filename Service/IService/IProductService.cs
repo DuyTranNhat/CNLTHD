@@ -9,10 +9,10 @@ namespace CNLTHD.Service.IService
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product?> GetProductByIdAsync(int id);
-        Task<Product> CreateProductAsync(ProductDTO productDto);
-        Task<Product?> UpdateProductAsync(int id, ProductDTO productDto);
+        Task<IEnumerable<ProductDTO>> GetAllProductsAsync();
+        Task<ProductDTO?> GetProductByIdAsync(int id);
+        Task<Product> CreateProductAsync(CreateProductDto productDto);
+        Task<Product?> UpdateProductAsync(int id, UpdateProductDto productDto);
         Task<bool> DeleteProductAsync(int id);
     }
 }

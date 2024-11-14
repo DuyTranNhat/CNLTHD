@@ -36,14 +36,14 @@ namespace CNLTHD.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromForm] ProductDTO productDto)
+        public async Task<ActionResult<Product>> CreateProduct([FromForm] CreateProductDto productDto)
         {
             var product = await _productService.CreateProductAsync(productDto);
             return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Product>> UpdateProduct(int id, [FromForm] ProductDTO productDto)
+        public async Task<ActionResult<Product>> UpdateProduct(int id, [FromForm] UpdateProductDto productDto)
         {
             var product = await _productService.UpdateProductAsync(id, productDto);
             if (product == null) return NotFound();
