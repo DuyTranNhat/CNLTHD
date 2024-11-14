@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CNLTHD.DTO;
+using CNLTHD.Mapper;
 using CNLTHD.Models;
 using CNLTHD.Repository.IRepository;
 using CNLTHD.Service.IService;
@@ -20,11 +21,21 @@ namespace CNLTHD.Service
             _env = env;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync() => await _productRepository.GetAllAsync();
+        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync()
+        {
+            var product = await _productRepository.GetAllAsync();
+            var rs = product.Select(p => p.ToProductDTO()).ToList();
+            return rs;
+        }
 
-        public async Task<Product?> GetProductByIdAsync(int id) => await _productRepository.GetByIdAsync(id);
+        public async Task<ProductDTO?> GetProductByIdAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null) return null;
+            return product?.ToProductDTO();
+        }
 
-        public async Task<Product> CreateProductAsync(ProductDTO productDto)
+        public async Task<ProductDTO> CreateProductAsync(CreateProductDto productDto)
         {
             var product = new Product
             {
@@ -52,10 +63,13 @@ namespace CNLTHD.Service
             }
 
             await _productRepository.AddAsync(product);
-            return product;
+
+            var rs = await GetProductByIdAsync(product.ProductId);
+
+            return rs;
         }
 
-        public async Task<Product?> UpdateProductAsync(int id, ProductDTO productDto)
+        public async Task<ProductDTO?> UpdateProductAsync(int id, UpdateProductDto productDto)
         {
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null) return null;
@@ -83,7 +97,8 @@ namespace CNLTHD.Service
             }
 
             await _productRepository.UpdateAsync(product);
-            return product;
+            var rs = await GetProductByIdAsync(product.ProductId);
+            return rs;
         }
 
         public async Task<bool> DeleteProductAsync(int id)

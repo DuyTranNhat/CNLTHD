@@ -38,6 +38,11 @@ public partial class CnlthdDbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100);
         });
 
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId);
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CDB7D19F44");
@@ -49,14 +54,29 @@ public partial class CnlthdDbContext : DbContext
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Stock).HasDefaultValue(0);
 
-            entity.HasOne(d => d.Category).WithMany(p => p.Products)
-                .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK_Product_Category");
+            //entity.HasOne(d => d.Category).WithMany(p => p.Products)
+            //    .HasForeignKey(d => d.CategoryId)
+            //    .HasConstraintName("FK_Product_Category");
 
-            entity.HasOne(d => d.Supplier).WithMany(p => p.Products)
-                .HasForeignKey(d => d.SupplierId)
-                .HasConstraintName("FK_Product_Supplier");
+            //entity.HasOne(d => d.Supplier).WithMany(p => p.Products)
+            //    .HasForeignKey(d => d.SupplierId)
+            //    .HasConstraintName("FK_Product_Supplier");
+
+            entity.HasOne(d => d.Category)
+              .WithMany(c => c.Products) // Category có nhiều Product
+              .HasForeignKey(d => d.CategoryId)
+              .OnDelete(DeleteBehavior.Restrict) // Không xóa liên hoàn
+              .HasConstraintName("FK_Product_Category");
+
+            // Thiết lập quan hệ với Supplier
+            entity.HasOne(d => d.Supplier)
+                  .WithMany(s => s.Products) // Supplier có nhiều Product
+                  .HasForeignKey(d => d.SupplierId)
+                  .OnDelete(DeleteBehavior.Restrict) // Không xóa liên hoàn
+                  .HasConstraintName("FK_Product_Supplier");
         });
+
+
 
         modelBuilder.Entity<Supplier>(entity =>
         {
